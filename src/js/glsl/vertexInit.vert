@@ -1,0 +1,9 @@
+vec2 p = (aPosition.xy + uSize / 2.0) / uSize;
+vec4 beforeColor = texture2D(map, p);
+vec4 afterColor = texture2D(map2, p);
+// float tProgress = mod(uTime / 50., interval + delay) - delay;
+float tProgress = clamp(uProgress - aDelayDuration.x, 0.0, aDelayDuration.y) / aDelayDuration.y;
+tProgress = easeQuadInOut(tProgress);
+vec4 texelColor = beforeColor + (afterColor - beforeColor) * tProgress;
+float colorAvg = (texelColor.r + texelColor.g + texelColor.b / 3.0);
+vec4 rotate = quatFromAxisAngle(vec3(aPosition.w), aPosition.w * colorAvg * PI * 360.0 * tProgress);
