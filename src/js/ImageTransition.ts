@@ -22,8 +22,8 @@ export default class ImageTransition extends Three.Mesh {
     const plane: Three.PlaneGeometry = new Three.PlaneGeometry(
       width,
       height,
-      width,
-      height
+      width / 2,
+      height / 2
     )
 
     Bas.Utils.separateFaces(plane)
@@ -57,8 +57,8 @@ export default class ImageTransition extends Three.Mesh {
 
     imageGeo.createAttribute('aControl0', 4, (data): void => {
       new Three.Vector4(
-        Three.Math.randFloatSpread(1000),
-        Three.Math.randFloatSpread(1000),
+        Three.Math.randFloatSpread(800),
+        Three.Math.randFloatSpread(500),
         Three.Math.randFloatSpread(1000),
         Math.random() * -2 + 1
       ).toArray(data)
@@ -66,33 +66,27 @@ export default class ImageTransition extends Three.Mesh {
 
     imageGeo.createAttribute('aControl1', 4, (data): void => {
       new Three.Vector4(
-        Three.Math.randFloatSpread(1000),
-        Three.Math.randFloatSpread(1000),
+        Three.Math.randFloatSpread(800),
+        Three.Math.randFloatSpread(500),
         Three.Math.randFloatSpread(1000),
         Math.random() * -2 + 1
       ).toArray(data)
     })
 
-    const aDelayDuration = imageGeo.createAttribute(
-      'aDelayDuration',
-      2,
-      (data, index, faceCount): void => {
-        if (index) data[0] = ((index % width) / width) * maxPrefabDelay
-        data[1] = duration
-      }
-    )
+    const innerDelay: number = 0.04
+    const aDelayDuration = imageGeo.createAttribute('aDelayDuration', 2)
 
-    console.log(imageGeo)
+    console.log(imageGeo, aPosition)
 
-    for (
-      let i: number = 0, len: number = imageGeo.vertexCount;
-      i < len;
-      i += 2
-    ) {
-      for (let j: number = 0; j < 3; j++) {
-        aDelayDuration.array[i * 2 + j + 0] =
-          Math.abs(((i % width) * 2 - width) / width) * maxPrefabDelay
-        aDelayDuration.array[i * 2 + j + 1] = duration
+    for (let i: number = 0, len: number = imageGeo.vertexCount; i < len; i++) {
+      const delay: number =
+        Math.abs(((i % width) * 2 - width) / width) *
+        (maxPrefabDelay - innerDelay)
+      for (let j: number = 0; j < 6; j += 2) {
+        const index: number = i * 6 + j
+
+        aDelayDuration.array[index + 0] = delay + Math.random() * innerDelay
+        aDelayDuration.array[index + 1] = duration
       }
     }
 
