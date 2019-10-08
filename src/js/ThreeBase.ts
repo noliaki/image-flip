@@ -37,7 +37,7 @@ export default class ThreeBase {
         clearTimeout(this.timerId)
       }
 
-      this.timerId = setTimeout(() => {
+      this.timerId = window.setTimeout(() => {
         this.setSize()
       }, 300)
     })
@@ -60,6 +60,12 @@ export default class ThreeBase {
   }
 
   setSize() {
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    const width: number = window.innerWidth
+    const height: number = window.innerHeight
+
+    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setSize(width, height)
+    this.camera.aspect = width / height
+    this.camera.updateProjectionMatrix()
   }
 }
