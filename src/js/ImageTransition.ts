@@ -1,5 +1,5 @@
-import * as Three from 'Three'
-import * as Bas from 'Three-bas'
+import * as Three from 'three'
+import * as Bas from 'three-bas'
 
 import vertexParameters from './glsl/vertexParameters.vert'
 import vertexInit from './glsl//vertexInit.vert'
