@@ -1,6 +1,5 @@
 import * as Three from 'three'
 import ThreeBase from './ThreeBase'
-import Particle from './Particle'
 import { TweenLite, Power0 } from 'gsap/all'
 import ImageTransition from './ImageTransition'
 import { loadTexture } from './helper'
@@ -16,11 +15,13 @@ import { loadTexture } from './helper'
   light2.position.y = 1000
   light2.position.z = 1000
 
-  const axes = new Three.AxesHelper(1000)
+  if (process.env.NODE_ENV === 'development') {
+    const axes = new Three.AxesHelper(1000)
+    threeBase.addToScene(axes)
+  }
 
   threeBase.addToScene(light)
   threeBase.addToScene(light2)
-  // threeBase.addToScene(axes)
 
   const texture1: Three.Texture = await loadTexture('cat-1.jpg')
   const texture2: Three.Texture = await loadTexture('cat-2.jpg')
@@ -31,19 +32,13 @@ import { loadTexture } from './helper'
   )
   threeBase.addToScene(imageTransition)
 
-  const btn: HTMLElement | null = document.getElementById('animation-toggle')
-
-  if (!btn) {
-    throw new Error('`#animation-toggle` is not found')
-  }
-
   const timeline = {
     progress: 0
   }
 
   let forwards: boolean = false
 
-  btn.addEventListener('click', async event => {
+  window.addEventListener('click', async event => {
     event.preventDefault()
 
     if (forwards) {

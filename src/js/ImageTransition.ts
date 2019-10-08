@@ -16,14 +16,15 @@ export default class ImageTransition extends Three.Mesh {
     const width: number = image.width
     const height: number = image.height
 
-    const duration: number = 0.5
-    const maxPrefabDelay: number = 0.5
+    const duration: number = 0.6
+    const maxPrefabDelay: number = 0.4
+    const splitRatio: number = 2
 
     const plane: Three.PlaneGeometry = new Three.PlaneGeometry(
       width,
       height,
-      width / 2,
-      height / 2
+      width / splitRatio,
+      height / splitRatio
     )
 
     Bas.Utils.separateFaces(plane)
@@ -57,35 +58,41 @@ export default class ImageTransition extends Three.Mesh {
 
     imageGeo.createAttribute('aControl0', 4, (data): void => {
       new Three.Vector4(
-        Three.Math.randFloatSpread(800),
-        Three.Math.randFloatSpread(500),
-        Three.Math.randFloatSpread(1000),
+        Three.Math.randFloatSpread(2000),
+        Three.Math.randFloatSpread(2000),
+        Three.Math.randFloat(0, -1000),
         Math.random() * -2 + 1
       ).toArray(data)
     })
 
     imageGeo.createAttribute('aControl1', 4, (data): void => {
       new Three.Vector4(
-        Three.Math.randFloatSpread(800),
-        Three.Math.randFloatSpread(500),
-        Three.Math.randFloatSpread(1000),
+        Three.Math.randFloatSpread(2000),
+        Three.Math.randFloatSpread(2000),
+        Three.Math.randFloat(0, -1000),
         Math.random() * -2 + 1
       ).toArray(data)
     })
 
     const innerDelay: number = 0.04
     const aDelayDuration = imageGeo.createAttribute('aDelayDuration', 2)
-
-    console.log(imageGeo, aPosition)
+    const widthFaces: number = width * (2 / splitRatio)
+    const heightFaces: number = height * (2 / splitRatio)
 
     for (let i: number = 0, len: number = imageGeo.vertexCount; i < len; i++) {
-      const delay: number =
-        Math.abs(((i % width) * 2 - width) / width) *
+      const delayX: number =
+        Math.abs(((i % widthFaces) * 2 - widthFaces) / widthFaces) *
         (maxPrefabDelay - innerDelay)
+
+      const delayY: number =
+        Math.abs((Math.floor(i / widthFaces) * 4 - heightFaces) / heightFaces) *
+        (maxPrefabDelay - innerDelay)
+
       for (let j: number = 0; j < 6; j += 2) {
         const index: number = i * 6 + j
 
-        aDelayDuration.array[index + 0] = delay + Math.random() * innerDelay
+        aDelayDuration.array[index + 0] =
+          (delayX + delayY) / 2 + Math.random() * innerDelay
         aDelayDuration.array[index + 1] = duration
       }
     }
@@ -103,7 +110,7 @@ export default class ImageTransition extends Three.Mesh {
       },
       vertexFunctions: [
         Bas.ShaderChunk.cubic_bezier,
-        Bas.ShaderChunk.ease_quad_in_out,
+        Bas.ShaderChunk.ease_cubic_in_out,
         Bas.ShaderChunk.quaternion_rotation
       ],
       vertexParameters,
@@ -136,12 +143,6 @@ export default class ImageTransition extends Three.Mesh {
     temp.z = Three.Math.randFloatSpread(20)
 
     return temp
-  }
-
-  setTexture(texture: Three.Texture): void {
-    console.log((this.material as any).uniforms.map)
-    ;(this.material as any).uniforms.map.value.image = texture
-    ;(this.material as any).uniforms.map.value.needsUpdate = true
   }
 
   get progress(): number {
