@@ -38,7 +38,17 @@ import { loadTexture } from './helper'
 
   let forwards: boolean = false
 
-  window.addEventListener('click', async event => {
+  window.addEventListener('click', onTap, false)
+  window.addEventListener('touchstart', onTap, false)
+
+  loop()
+
+  function loop() {
+    threeBase.tick()
+    requestAnimationFrame(loop)
+  }
+
+  function onTap(event): void {
     event.preventDefault()
 
     if (forwards) {
@@ -48,13 +58,6 @@ import { loadTexture } from './helper'
     }
 
     forwards = !forwards
-  })
-
-  loop()
-
-  function loop() {
-    threeBase.tick()
-    requestAnimationFrame(loop)
   }
 
   function forwardsProgress(duration: number = 3): Promise<void> {

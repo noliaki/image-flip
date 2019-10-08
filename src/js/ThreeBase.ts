@@ -1,6 +1,8 @@
 import * as Three from 'three'
 import OrbitControls from 'three-orbitcontrols'
-// import TrackballControls from 'three-trackballcontrols'
+import TrackballControls from 'three-trackballcontrols'
+
+import { isPC } from './helper'
 
 export default class ThreeBase {
   public scene: Three.Scene
@@ -26,7 +28,9 @@ export default class ThreeBase {
     })
     this.renderer.setClearColor(new Three.Color(0x1a202c))
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+    this.controls = isPC()
+      ? new TrackballControls(this.camera, this.renderer.domElement)
+      : new OrbitControls(this.camera, this.renderer.domElement)
 
     window.addEventListener('resize', () => {
       if (this.timerId) {

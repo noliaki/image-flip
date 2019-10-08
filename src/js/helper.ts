@@ -1,5 +1,7 @@
 import * as Three from 'three'
 
+const UA: string = navigator.userAgent.toLocaleLowerCase()
+
 export interface PointData {
   x: number
   y: number
@@ -85,4 +87,8 @@ export function loadTexture(src: string): Promise<Three.Texture> {
       resolve(texture)
     })
   })
+}
+
+export function isPC(): boolean {
+  return !/(iphone|ipad|ipod|android)/i.test(UA)
 }
