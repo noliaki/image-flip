@@ -1,16 +1,15 @@
 import * as Three from 'three'
 import OrbitControls from 'three-orbitcontrols'
-import TrackballControls from 'three-trackballcontrols'
+// import TrackballControls from 'three-trackballcontrols'
 
 export default class ThreeBase {
   public scene: Three.Scene
   public camera: Three.PerspectiveCamera
   public renderer: Three.WebGLRenderer
   public controls: OrbitControls
-  public timerId: number | null
+  public timerId: number | null = null
 
   constructor() {
-    this.timerId = null
     this.scene = new Three.Scene()
     this.camera = new Three.PerspectiveCamera(
       45,
@@ -27,7 +26,7 @@ export default class ThreeBase {
     })
     this.renderer.setClearColor(new Three.Color(0x1a202c))
 
-    this.controls = new TrackballControls(this.camera, this.renderer.domElement)
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
     window.addEventListener('resize', () => {
       if (this.timerId) {
